@@ -227,11 +227,29 @@ def merge_point_in_time(prices: pd.DataFrame, fundamentals: pd.DataFrame, ticker
         p["MarketCap"] = np.nan
         p["Ticker"] = ticker
         return p
+        
     f = fundamentals.sort_values("filed").copy()
+
+    cols = [    'TotalAssets','TotalLiabilities', 'Equity', 'RnD', 
+                'LongTermDebt', 'Revenue','NetIncome', 
+                'OperatingIncome', 'OperatingCF'
+           ]
+    
+    cols += 'EPS_Diluted' if 'EPS_Diluted' in f.columns else 'EPS_Basic'
+    
+    for col in f.columns:
+        col_name = col
+        if col not in cols:
+            continue
+        elif col=="EPS_Diluted" or col=="EPS_Basic":
+            col_name = "EPS"
+        elif col=="TotalAssets":
+            col_name = "Assets"
+        for w in [1,2,4]:
+            f[col_name + "_Growth_" f"{3*w}m"] = f[col].pct_change(w)
+   
     merged = pd.merge_asof(p, f, left_on="Date", right_on="filed", direction="backward")
     # MarketCap needs a DAILY price, so it can't be computed inside the fundamentals
-    # panel itself -- it's built here, after the point-in-time join, as
-    # (already-known share count) x (that day's Close). This makes MarketCap update
     # every trading day even though shares outstanding only updates once a quarter.
     if "SharesOutstanding" in merged.columns:
         merged["MarketCap"] = merged["SharesOutstanding"] * merged["Close"]
