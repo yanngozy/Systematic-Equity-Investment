@@ -3,6 +3,8 @@ import pandas as pd
 import yfinance as yf
 import time
 
+# We use yahoo finance to extract price volume data for s&p 500 stocks 
+
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
 }
@@ -10,10 +12,10 @@ headers = {
 url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
 sp500 = pd.read_html(url, storage_options=headers)[0]
 
-tickers = sp500["Symbol"].str.replace(".", "-", regex=False).tolist()
+s_p_500_tickers = sp500["Symbol"].str.replace(".", "-", regex=False).tolist()
 
 
-def generate_price_volume_dataset(start_date="2005-01-01", end_date="2026-03-31",batch_size=100)
+def generate_price_volume_dataset(ticker=s_p_500_tickers,start_date="2005-01-01", end_date="2026-03-31",batch_size=100)
 
     all_closes = []
     
