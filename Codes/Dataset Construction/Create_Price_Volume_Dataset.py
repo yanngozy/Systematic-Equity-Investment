@@ -13,13 +13,13 @@ sp500 = pd.read_html(url, storage_options=headers)[0]
 tickers = sp500["Symbol"].str.replace(".", "-", regex=False).tolist()
 
 
-def generate_price_volume_dataset(batch_size=100)
+def generate_price_volume_dataset(start_date="2005-01-01", end_date="2026-03-31",batch_size=100)
 
     all_closes = []
     
     for i in range(0, len(tickers), batch_size):
         batch = tickers[i:i+batch_size]
-        data  = yf.download(batch, start="2005-01-01", end="2026-03-31",
+        data  = yf.download(batch, start=start_date, end=end_date,
                            auto_adjust=True, progress=False)
         data=data.stack(level="Ticker").reset_index(level='Ticker')
         all_closes.append(data)
