@@ -57,7 +57,7 @@ def compute_sectional_zscores(df: pd.DataFrame, columns: list, eps: float = 1e-9
             continue
             
         mean = df.groupby(groupby_keys)[col].transform("mean")
-        std = df.groupby(groupby_keys)[col].transform("std")
+        std  = df.groupby(groupby_keys)[col].transform("std")
         
         if col=='returns':
             df['returns_zscore'] = (df[col] - mean) / (std + eps)   
@@ -67,7 +67,7 @@ def compute_sectional_zscores(df: pd.DataFrame, columns: list, eps: float = 1e-9
     return 0
 
 
-def compute_profitability_signals(data: pd.DataFrame , eps=10**(-9)) :
+def compute_factor_signals(data: pd.DataFrame , eps=10**(-9)) :
     """
         Compute raw profitability ratios.
         Input  : panel df with columns listed above
@@ -77,15 +77,15 @@ def compute_profitability_signals(data: pd.DataFrame , eps=10**(-9)) :
     df = data.copy()
     df = compute_benchmark_returns(df)
 
-    # --- Margin signals ---
-    #df['gross_margin']     = df['GrossProfit']     / (df['Revenue'] + eps)
-    df['operating_margin']  = df['OperatingIncome']  / (df['Revenue'] + eps)
-    df['net_margin']        = df['NetIncome']        / (df['Revenue'] + eps)
-
-    # --- Return signals ---
-    # ROA: how efficiently assets generate profit, ROE: return on book equity
-    df['roa'] = df['NetIncome'] / (df['TotalAssets'] + eps)
-    df['roe'] = df['NetIncome'] / (df['Equity'] + eps)
+    # ---------- Quality / Profitability -------
+    #df['gross_margin']     =  df['GrossProfit']     / (df['Revenue'] + eps)
+    df['operating_margin']  =  df['OperatingIncome']  / (df['Revenue'] + eps)
+    df['net_margin']        =  df['NetIncome']        / (df['Revenue'] + eps)
+    df["accruals"]          =  (df["NetIncome"] - df["OperatingCF"]) / (df["TotalAssets"] + eps)
+    df['roa']               =  df['NetIncome'] / (df['TotalAssets'] + eps)
+    df['roe']               =  df['NetIncome'] / (df['Equity'] + eps)
+    df['debt_ratio']        =  df["LongTermDebt"] / (df["TotalAssets"] + eps)
+    df["asset_turnover"]    =  df["Revenue"] / (df["TotalAssets"] + eps)
 
     # ROIC proxy: operating income / (assets - current liabilities)
     if "TotalLiabilities" in df.columns:
@@ -96,32 +96,33 @@ def compute_profitability_signals(data: pd.DataFrame , eps=10**(-9)) :
         df["roic_proxy"] = df["OperatingIncome"] / (df["TotalAssets"] + eps)
 
 
+
+    # --------------- Value ---------------
     # E/P Ratio (Earnings Yield) 
-    safe_close = df["Close"].where(df["Close"] > 0, np.nan)
-    df["earnings_yield"] = df["EPS_Diluted"] / (safe_close + eps)
-    df["earnings_yield_basic"] = df["EPS_Basic"] / (safe_close + eps)
+   
+    df["book_to_market"]  =  df["Equity"]  / (df["MarketCap"] + eps)
+    df["earnings_yield"]  =  df["NetIncome"] / (df["MarketCap"] + eps)
+    df["sales_yield"]     =  df["Revenue"] / (df["MarketCap"] + eps)
+
+    safe_close            =  df["Close"].where(df["Close"] > 0, np.nan)
+    df["eps_yield"]       =  df["EPS_Diluted"] / (safe_close + eps)
+    df["eps_yield_basic"] =  df["EPS_Basic"] / (safe_close + eps)
     
     # B/P Ratio (Book-to-Price) 
-    # Book Value Per Share = Equity / SharesOutstanding
     if "SharesOutstanding" in df.columns:
-        bvps = df["Equity"] / (df["SharesOutstanding"] + eps)
-        df["book_to_price"] = bvps / (safe_close + eps)   
-        df["sales_to_price"] = (df["Revenue"] / (df["SharesOutstanding"] + eps)) / (safe_close + eps)
+        bvps                 =  df["Equity"] / (df["SharesOutstanding"] + eps)      # Book Value Per Share = Equity / SharesOutstanding
+        df["book_to_price"]  =  bvps / (safe_close + eps)   
+        df["sales_to_price"] =  (df["Revenue"] / (df["SharesOutstanding"] + eps)) / (safe_close + eps)
     else:
-        df["book_to_price"] = np.nan
-        df["sales_to_price"] = np.nan
+        df["book_to_price"]  =  np.nan
+        df["sales_to_price"] =  np.nan
 
-    # Earning per share momentum
-    df["eps_growth_80d"] = df.groupby("Ticker")["EPS_Diluted"].pct_change(periods=80) 
-    df['debt_ratio'] = df["LongTermDebt"] / (df["TotalAssets"] + eps)
-    df["asset_turnover"] = df["Revenue"] / (df["TotalAssets"] + eps)
-
+   
     return df
 
 
 
-def build_technical_features(df: pd.DataFrame, eps = 10**(-9),
-                               zscore: bool = False) -> pd.DataFrame:
+def build_technical_features(df: pd.DataFrame, eps = 10**(-9)) -> pd.DataFrame:
     """
         Compute technical indicators from OHLCV + returns panel data.
     
