@@ -1,6 +1,7 @@
 # Cross-Sectional Alpha Generation Pipeline
 
-An end-to-end quantitative research framework designed to predict asset returns using systematic cross-sectional regression models. This architecture is optimized specifically to maximize the **Rank Information Coefficient (Rank IC)** while minimizing turnover and tracking error.
+An end-to-end quantitative research framework designed to predict cross-sectional returns on S\&P 500 equities using  using fundamental and technical alpha factors spanning value, quality, momentum, volatility, volume, and market structure with regression models. This architecture is optimized specifically to maximize the **Rank Information Coefficient (Rank IC)** while minimizing turnover and tracking error.
+
 
 ## 🚀 Architecture Overview
 
