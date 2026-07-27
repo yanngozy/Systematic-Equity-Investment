@@ -55,7 +55,7 @@ Performance & Risk Analysis
 
 * S&P 500 constituents
 * Daily observations
-* 2016–2025
+* 2007–2026
 * Daily portfolio rebalancing
 
 ### Data Sources
