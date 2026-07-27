@@ -155,16 +155,8 @@ Portfolio turnover is explicitly modelled.
 
 Transaction costs are applied according to
 
-[
-R_t^{net}
-=========
 
-## R_t^{gross}
-
-c
-\times
-\mathrm{Turnover}_t
-]
+Net Return = Gross Return - c × Turnover
 
 where
 
