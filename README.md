@@ -194,27 +194,11 @@ data/
 ├── raw/
 ├── processed/
 
-models/
+Codes/
 │
-├── ridge.py
-├── lightgbm.py
-├── catboost.py
-└── xgboost.py
-
-features/
-│
-├── fundamentals.py
-├── technical.py
-
-portfolio/
-│
-├── weighting.py
-├── backtest.py
-
-notebooks/
-
-results/
-
+├── preprocessing_lib.py
+├── Backtest_lib.py
+└── Notebook
 paper/
 ```
 
