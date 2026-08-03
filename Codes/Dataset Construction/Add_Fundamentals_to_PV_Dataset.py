@@ -63,7 +63,6 @@ CONCEPT_MAP = {
     "RnD":              {"tags": ["ResearchAndDevelopmentExpense"], "kind": "duration"},
     "EPS_Basic":        {"tags": ["EarningsPerShareBasic"], "kind": "duration", "unit": "USD/shares"},
     "EPS_Diluted":      {"tags": ["EarningsPerShareDiluted"], "kind": "duration", "unit": "USD/shares"},
-    # Shares outstanding -> used to compute MarketCap = SharesOutstanding * Close.
     "SharesOutstanding": {"tags": ["EntityCommonStockSharesOutstanding"], "kind": "instant",
                           "unit": "shares", "namespace": "dei",
                           "fallback_tags": ["CommonStockSharesOutstanding"]},
