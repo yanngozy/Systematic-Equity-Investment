@@ -186,23 +186,6 @@ This allows gross and net performance to be compared under realistic implementat
 
 ---
 
-## Repository Structure
-
-```text
-data/
-│
-├── raw/
-├── processed/
-
-Codes/
-│
-├── preprocessing_lib.py
-├── Backtest_lib.py
-└── Notebook
-paper/
-```
-
----
 
 ## Current Results
 
@@ -213,7 +196,6 @@ Out-of-sample testing over 2017–2025 shows:
 * Strong gross risk-adjusted returns for both long-only and market-neutral portfolios
 * Significant performance degradation after realistic transaction costs, highlighting the importance of turnover-aware portfolio construction
 
-The accompanying research paper discusses these results in detail and analyses the trade-off between predictive power and implementation costs.
 
 ---
 
